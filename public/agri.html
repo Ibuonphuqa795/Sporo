@@ -2,8 +2,14 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>SPORO — AgriVision</title>
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#2e6e42" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="SPORO" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -294,8 +300,12 @@ svg.ic{width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;str
 .dbox .l svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.9;flex-shrink:0}
 .dbox .v{font-size:21px;font-weight:800;margin-top:6px;letter-spacing:-.01em}.dbox .v small{font-size:11px;color:var(--muted);font-weight:600}
 .dbox .b{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:5px;display:inline-block}
-.b-ok{background:#e8f2e4;color:var(--green-d)}.b-warn{background:#fbf0dc;color:#9a6714}.b-bad{background:#fbe6e0;color:#9a3d28}
-[data-theme="dark"] .b-ok{background:rgba(90,168,90,.18)}
+/* Nhãn đánh giá dưới số liệu — bảng màu mềm giống badge sự kiện */
+.b-ok{background:#e8f2e4;color:#3c6b3c}.b-cool{background:#e5eff6;color:#2b6a90}.b-warn{background:#f7ecd6;color:#8a5a12}.b-bad{background:#fbe6e0;color:#9a3d28}
+[data-theme="dark"] .b-ok{background:rgba(99,180,99,.20);color:#9bd69b}
+[data-theme="dark"] .b-cool{background:rgba(99,174,221,.22);color:#8ec8e6}
+[data-theme="dark"] .b-warn{background:rgba(224,170,90,.22);color:#e8bd7a}
+[data-theme="dark"] .b-bad{background:rgba(231,138,111,.26);color:#f2ac97}
 .chartgrid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
 .chartgrid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .donutwrap{position:relative}.donutc{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
@@ -587,6 +597,113 @@ body.editing .editbar{display:flex}
 @media(max-width:820px){.wgrid{grid-template-columns:repeat(3,1fr)}.widget.sp12,.widget.sp6,.widget.sp3{grid-column:span 3}}
 @media(max-width:1100px){.grid,.chartgrid,.chartgrid2,.row3{grid-template-columns:1fr}}
 @media(max-width:640px){.tabs{display:none}.tiles2,.gaugebox,.dgrid{grid-template-columns:1fr}}
+/* Sức khỏe vườn */
+.widget[data-w="health"]>.card{display:flex;flex-direction:column}
+.hsrow{display:flex;align-items:center;gap:18px;flex:1;min-height:0}
+.hsring{width:112px;height:112px;flex:none;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--green) 0deg,var(--line) 0deg)}
+.hsring::after{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--card,#fff)}
+body[data-theme="dark"] .hsring::after{background:#1f2834}
+.hsnum{position:relative;z-index:1;text-align:center;line-height:1}
+.hsnum b{font-size:42px;font-weight:800;letter-spacing:-1px}
+.hsnum small{font-size:14px;color:var(--muted)}
+.hsinfo{flex:1;min-width:0}
+.hsmsg{font-size:16.5px;color:var(--text);margin-bottom:14px;line-height:1.5}
+.hsbars{display:flex;flex-direction:column;gap:10px}
+.hsb{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--muted)}
+.hsb .k{width:70px;flex:none}
+.hsb .t{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.hsb .t>span{display:block;height:100%;border-radius:4px;background:var(--green)}
+.hsb .val{width:42px;text-align:right;flex:none;font-weight:800;font-size:15.5px;color:var(--text)}
+/* Tưới thông minh */
+.advhead{display:flex;align-items:center;gap:10px;margin:2px 0 10px}
+.advdot{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;color:#fff}
+.advdot svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2}
+.advact{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.advsub{font-size:14px;color:var(--muted)}
+.advreason{font-size:16px;color:var(--text);line-height:1.55;margin-bottom:12px}
+.advmetrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto}
+.advm{background:var(--inner);border-radius:11px;padding:12px 8px;text-align:center}
+.advm b{font-size:22px;font-weight:800;display:block}
+.advm span{font-size:13.5px;color:var(--muted)}
+.advtip{font-size:13.5px;color:var(--muted);margin-top:12px;display:flex;gap:6px;align-items:flex-start;line-height:1.45}
+.ai-divider{height:1px;background:var(--line);margin:16px 0}
+.advcard{background:var(--inner);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
+.advcard .advhead{margin-top:0}
+.advcard .advreason{margin-top:10px;margin-bottom:0;color:var(--text)}
+.insight .advmetrics{margin-top:10px}
+.ai-notes{margin-top:10px;display:flex;flex-direction:column;gap:9px}
+.ai-note{display:flex;gap:10px;align-items:flex-start;font-size:16px;color:var(--text);line-height:1.5}
+.ai-note-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none;margin-top:7px}
+/* ============================================================
+   HỆ THỐNG CỠ CHỮ THỐNG NHẤT — ưu tiên lớn, cân đối, dễ đọc
+   (đặt cuối để chuẩn hoá mọi widget về cùng một thang chữ)
+   ============================================================ */
+/* Tiêu đề & mô tả phụ của mọi widget */
+.ch h3{font-size:15.5px}
+.ch .sub{font-size:14px}
+/* Nhãn chỉ số nhỏ → nâng lên mức dễ đọc đồng nhất */
+.dbox .l{font-size:14px}
+.dbox .v{font-size:27px}
+.dbox .v small{font-size:14.5px}
+.dbox .b{font-size:12px;padding:3px 10px}
+.stat .lb{font-size:clamp(13px,3.4cqi,18px)}
+/* Nhãn phụ / caption thống nhất tối thiểu 13.5px */
+.climstats .vs .k,.sun-info .si .k,.ai-stat .k,.res .l,.reslab,.log-time,.presslab{font-size:13.5px}
+.climstats .vs .n{font-size:23px}
+.sun-info .si .v{font-size:25px}
+.ai-stat .v{font-size:20px}
+.res .v{font-size:27px}
+/* Widget Nhiệt độ & Độ ẩm — số lớn cân đối */
+.clim-h{font-size:16px}
+.clim-big{font-size:42px}
+.clim-big small{font-size:19px}
+.clim-big .b{font-size:13.5px}
+.clim-rows>div{font-size:15.5px}
+.cmpmetric .ck{font-size:14px}.cmpmetric .cv{font-size:16px}
+.fcrow .fd{font-size:17.5px}.fcrow .flo,.fcrow .fhi{font-size:17.5px}
+.hcol .hh{font-size:15px}.hcol .hp{font-size:23px}
+/* Nhãn/viên nhỏ, thẻ, chú giải */
+.pill{font-size:13px}
+.tag{font-size:13px}
+.legend .li{font-size:14px}
+.zbadge,.zone .sub{font-size:13px}.zone .nm{font-size:16.5px}
+.sensorline,.rainSum{font-size:14.5px}
+.bigval{font-size:36px}
+/* Widget insight — chữ chính lớn hơn */
+.insight .ai-primary{font-size:18px}
+.ai-cktext{font-size:16px}
+/* Bảng nhật ký & sự kiện */
+table{font-size:15px}
+thead th{font-size:12.5px}
+.evp{font-size:13px}
+.log-body .lt{font-size:16.5px}.log-body .ln{font-size:15px}
+/* Tiêu đề các ô thời tiết nhỏ (cảm giác, UV, độ ẩm, áp suất) → đồng bộ với tiêu đề widget */
+.wt-hd{font-size:14.5px}
+.wt-desc{font-size:15px}
+.uvlvl{font-size:16.5px}
+/* SỐ LIỆU CHÍNH của các ô (UV, áp suất, độ ẩm, cảm giác, gió) — to & nổi bật */
+.wt-val{font-size:clamp(50px,19cqi,82px)}
+.windinfo .wd{font-size:clamp(50px,17cqi,82px)}
+.windinfo .wdd{font-size:clamp(23px,6cqi,34px)}
+.clim-big{font-size:46px}
+.bigval{font-size:40px}
+@media(max-width:640px){.ch h3{font-size:14.5px}.dbox .v{font-size:23px}.clim-big{font-size:38px}.wt-val{font-size:clamp(40px,17cqi,64px)}}
+/* Nhãn tiêu đề mục nhỏ (eyebrow) — phân tách rõ từng phần thông tin */
+.ai-eyebrow{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-top:18px}
+.insight .advreason{margin-top:10px}
+/* ============================================================
+   CHỮ NHỎ ĐỒNG NHẤT — mọi nhãn/caption/mô tả phụ CÙNG 1 CỠ (13px)
+   ============================================================ */
+.ch .sub,.dbox .l,.dbox .v small,.advsub,.advm span,.advtip,.hsb,.hsnum small,
+.climstats .vs .k,.sun-info .si .k,.ai-stat .k,.res .l,.reslab,.log-time,.presslab,
+.legend .li,.cmpmetric .ck,.zone .sub,.sensorline,.rainSum,.wt-desc,.sun-rem,
+.rainhold,.log-empty,.cam .ce,.htask .st{font-size:13px}
+/* Nhãn CHỮ HOA nhỏ (eyebrow/tiêu đề mục) — cùng cỡ */
+.ai-eyebrow,.ai-ckhead,.sub2,thead th{font-size:12.5px}
+/* Tiêu đề các ô thời tiết = tiêu đề widget (đồng cỡ .ch h3) */
+.wt-hd{font-size:15.5px}
+/* Viên trạng thái / badge nhỏ — cùng cỡ */
+.pill,.tag,.zbadge,.dbox .b,.evp,.clim-big .b,.wt-badge{font-size:12.5px}
 </style>
 </head>
 <body data-theme="light">
@@ -649,7 +766,7 @@ body.editing .editbar{display:flex}
 
           <div class="widget sp4" data-w="climate"><div class="wbar"><span class="whandle"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></span><button class="wremove">✕</button></div>
             <div class="card">
-              <div class="ch"><div><h3 data-i18n="s.climate">Nhiệt độ & Độ ẩm</h3><div class="sub" data-i18n="s.climateSub">Chi tiết realtime</div></div><span class="pill" id="climPill">—</span></div>
+              <div class="ch"><div><h3 data-i18n="s.climate">Nhiệt độ & Độ ẩm</h3><div class="sub" data-i18n="s.climateSub">Chi tiết thời gian thực</div></div><span class="pill" id="climPill">—</span></div>
               <div class="climgrid">
                 <div class="climcol">
                   <div class="clim-h"><svg style="color:var(--amber)" viewBox="0 0 24 24"><path d="M10 13V5a2 2 0 114 0v8a4 4 0 11-4 0z"/></svg><span data-i18n="s.climSub">Nhiệt độ vườn</span></div>
@@ -688,12 +805,32 @@ body.editing .editbar{display:flex}
           <div class="widget sp2" data-w="ai"><div class="wbar"><span class="whandle"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></span><button class="wremove">✕</button></div>
             <div class="insight" style="height:100%">
               <div><div class="t"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--green)"><path d="M12 3v2M5 5l1.5 1.5M3 12h2M19 5l-1.5 1.5M21 12h-2M12 8a4 4 0 00-2 7.5V18h4v-2.5A4 4 0 0012 8z"/></svg> <span data-i18n="s.ai">Gợi ý thông minh</span></div>
-                <div id="aiMsg" class="ai-primary">…</div>
-                <div class="ai-ckhead" data-i18n="s.todo">Việc nên làm hôm nay</div>
-                <div id="aiCheck" class="ai-check"></div>
+                <div class="ai-eyebrow" data-i18n="s.wateradv" style="margin-top:16px">Tưới nước hôm nay</div>
+                <div class="advcard">
+                  <div class="advhead"><div class="advdot" id="advDot" style="background:var(--muted)"><svg viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div><div style="flex:1;min-width:0"><div class="advact" id="advAct">—</div><div class="advsub" id="advSuggest">—</div></div><span class="pill" id="advBadge" style="align-self:flex-start">—</span></div>
+                  <div class="advreason" id="advReason">Đang phân tích dự báo thời tiết…</div>
+                </div>
+                <div class="ai-eyebrow" data-i18n="s.wateradata" style="margin-top:14px">Số liệu</div>
+                <div class="advmetrics" id="advMetrics"></div>
+                <div class="advtip" id="advTip"></div>
+                <div id="aiMsg" class="ai-primary" style="display:none">…</div>
+                <div class="ai-divider"></div>
+                <div class="ai-eyebrow" data-i18n="s.notes">Lưu ý hôm nay</div>
+                <div id="aiNotes" class="ai-notes"></div>
+                <div class="ai-eyebrow" data-i18n="s.todo" style="margin-top:16px">Việc nên làm hôm nay</div>
+                <div id="aiCheck" class="ai-check" style="margin-top:10px"></div>
                 <div class="ai-add"><input id="todoInput" class="ai-addinp" type="text" maxlength="70" data-i18n-ph="s.todoAdd" placeholder="Thêm việc của bạn…"><button class="ai-addbtn" id="todoAdd" title="Thêm việc">+</button></div></div>
               <div class="ai-foot">
                 <button class="ai-loc" id="aiBtn" data-i18n="s.changeLoc">Đổi vị trí thời tiết</button>
+              </div>
+            </div></div>
+
+          <div class="widget sp2" data-w="health"><div class="wbar"><span class="whandle"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></span><button class="wremove">✕</button></div>
+            <div class="card">
+              <div class="ch"><div><h3 data-i18n="s.health">Sức khỏe vườn</h3><div class="sub" data-i18n="s.healthSub">Chỉ số tổng hợp</div></div><span class="pill" id="hsBadge">—</span></div>
+              <div class="hsrow">
+                <div class="hsring" id="hsRing"><div class="hsnum"><b id="hsScore">--</b><small>/100</small></div></div>
+                <div class="hsinfo"><div class="hsmsg" id="hsMsg">—</div><div class="hsbars" id="hsBars"></div></div>
               </div>
             </div></div>
 
@@ -845,7 +982,7 @@ body.editing .editbar{display:flex}
               <div class="dbox"><div class="l"><svg style="color:var(--green)" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg><span data-i18n="d.valve">Van tưới</span></div><div class="v" style="font-size:17px" id="dValve">—</div></div>
               <div class="dbox"><div class="l"><svg style="color:var(--amber)" viewBox="0 0 24 24"><path d="M10 13V5a2 2 0 114 0v8a4 4 0 11-4 0z"/></svg><span data-i18n="d.tavg">Nhiệt độ trung bình</span></div><div class="v"><span id="dTavg">--</span><small>°C</small></div></div>
               <div class="dbox"><div class="l"><svg style="color:var(--blue)" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg><span data-i18n="d.mavg">Độ ẩm trung bình</span></div><div class="v"><span id="dMavg">--</span><small>%</small></div></div>
-              <div class="dbox"><div class="l"><svg style="color:var(--green)" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg><span data-i18n="d.vpd">VPD (thiếu hụt ẩm)</span></div><div class="v"><span id="dVpd">--</span><small> kPa</small></div><span class="b" id="dVpdB">—</span></div>
+              <div class="dbox"><div class="l"><svg style="color:var(--green)" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg><span data-i18n="d.vpd">Độ khô không khí</span></div><div class="v"><span id="dVpd">--</span><small> kPa</small></div><span class="b" id="dVpdB">—</span></div>
               <div class="dbox"><div class="l"><svg style="color:var(--blue)" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg><span data-i18n="d.dew">Điểm sương</span></div><div class="v"><span id="dDew">--</span><small>°C</small></div></div>
               <div class="dbox"><div class="l"><svg style="color:var(--terra)" viewBox="0 0 24 24"><path d="M12 2c-4 6-6 9-6 12a6 6 0 0012 0c0-3-2-6-6-12z"/></svg><span data-i18n="d.risk">Nguy cơ nấm bệnh</span></div><div class="v" style="font-size:16px" id="dRisk">—</div><span class="b" id="dRiskB">—</span></div>
               <div class="dbox"><div class="l"><svg style="color:var(--green)" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg><span data-i18n="s.wtoday">Tưới hôm nay</span></div><div class="v"><span id="dWaterN">0</span><small data-i18n="d.times"> lần</small></div></div>
@@ -860,7 +997,7 @@ body.editing .editbar{display:flex}
       </section>
 
       <section id="secChart" class="col">
-        <div class="ch" style="padding:0 2px"><div><h3 style="font-size:16px" data-i18n="s.chartH">Biểu đồ theo thời gian</h3></div><div class="seg" style="margin:0;width:auto"><button data-rng="day" class="on" data-i18n="s.day">1 ngày</button><button data-rng="week" data-i18n="s.week">7 ngày</button><button data-rng="0" data-i18n="s.all">Tất cả</button></div></div>
+        <div class="ch" style="padding:0 2px"><div><h3 style="font-size:16px" data-i18n="s.chartH">Biểu đồ theo thời gian</h3></div><div class="seg" style="margin:0;width:auto"><button data-rng="day" class="on" data-i18n="s.day">1 ngày</button><button data-rng="week" data-i18n="s.week">7 ngày</button><button data-rng="month" data-i18n="an.30">30 ngày</button><button data-rng="0" data-i18n="s.all">Tất cả</button></div></div>
         <div class="chartgrid">
           <div class="card"><div class="ch"><div><h3 data-i18n="c.temp">Nhiệt độ theo thời gian</h3><div class="sub" id="tempDesc">SHT31</div></div><span class="tag">°C</span></div><div class="cbox"><canvas id="tempChart"></canvas></div></div>
           <div class="card"><div class="ch"><div><h3 data-i18n="c.dist">Phân bố nhiệt độ</h3><div class="sub" data-i18n="c.distSub">Trong / ngoài vùng</div></div></div><div class="donutbox donutwrap"><canvas id="zoneDonut"></canvas><div class="donutc"><div><b id="donutBig">0%</b><br><small data-i18n="c.opt">tối ưu</small></div></div></div><div class="legend" id="donutLegend"></div></div>
@@ -965,15 +1102,18 @@ const DICT={vi:{
  "t.overview":"Tổng quan","t.monitor":"Giám sát","t.charts":"Biểu đồ","t.log":"Nhật ký",
  "s.today":"Lịch hôm nay","s.todaySub":"Hoạt động trong ngày","s.nowTime":"Giờ hiện tại","s.todo":"Việc nên làm hôm nay","s.todoAdd":"Thêm việc của bạn…","s.samples":"Mẫu đã ghi","s.samplesU":"mẫu","s.zones":"Khu đang trồng","s.zonesU":"khu",
  "s.clim":"Khí hậu","s.climSub":"Nhiệt độ vườn","s.eff":"Hiệu quả","s.effSub":"Nhiệt & ẩm tối ưu",
- "s.climate":"Nhiệt độ & Độ ẩm","s.climateSub":"Chi tiết realtime","c.hilo2":"Cao / thấp","c.avg":"Trung bình","c.range":"Vùng tối ưu","c.onoff":"Ngưỡng ON/OFF",
- "s.res":"Tài nguyên vườn","s.resSub":"Cập nhật realtime","s.soil":"Độ ẩm đất","s.fav":"Vùng thuận lợi","s.wtoday":"Tưới hôm nay","s.ineff":"Chưa tối ưu","s.opt":"Tối ưu",
+ "s.climate":"Nhiệt độ & Độ ẩm","s.climateSub":"Chi tiết thời gian thực","c.hilo2":"Cao / thấp","c.avg":"Trung bình","c.range":"Vùng tối ưu","c.onoff":"Ngưỡng ON/OFF",
+ "s.res":"Tài nguyên vườn","s.resSub":"Cập nhật liên tục","s.soil":"Độ ẩm đất","s.fav":"Vùng thuận lợi","s.wtoday":"Tưới hôm nay","s.ineff":"Chưa tối ưu","s.opt":"Tối ưu",
  "s.ctl":"Điều khiển tưới","s.waterNow":"Tưới ngay","s.waterStop":"Dừng tưới",
+ "s.health":"Sức khỏe vườn","s.healthSub":"Chỉ số tổng hợp","s.advice":"Tưới thông minh","s.adviceSub":"Theo dự báo & bốc hơi","s.wateradv":"Tưới nước hôm nay","s.wateradata":"Số liệu","s.notes":"Lưu ý hôm nay",
+ "hs.temp":"Nhiệt độ","hs.moist":"Độ ẩm","hs.stable":"Ổn định","adv.water":"Nên tưới","adv.skip":"Nên hoãn tưới","adv.hold":"Chưa cần tưới","adv.et0":"Bốc hơi","adv.rain":"Mưa dự báo","adv.prob":"Xác suất mưa",
+ "an.title":"Phân tích lịch sử","an.7":"7 ngày","an.30":"30 ngày","an.tempTrend":"Xu hướng nhiệt độ","an.moistTrend":"Xu hướng độ ẩm đất","an.waterDay":"Số lần tưới mỗi ngày","an.nodata":"Chưa đủ dữ liệu lịch sử",
  "m.real":"Thực tế","m.temp":"Nhiệt độ","m.rain":"Mưa","m.wind":"Gió",
  "s.tempToday":"Nhiệt độ hôm nay","s.hilo":"Cao / thấp trong ngày","s.chi":"°C cao","s.clo":"°C thấp","s.chi2":"Cao","s.clo2":"Thấp","s.ai":"Gợi ý thông minh","s.changeLoc":"Đổi vị trí thời tiết",
  "s.zoneH":"Sức khỏe theo khu","s.zoneSub":"Nhấn để chọn khu · quản lý trong Cài đặt",
  "s.station":"Trạm quan trắc","s.stationSub":"Dữ liệu Open-Meteo đầy đủ","s.myloc":"Vị trí của tôi",
  "w.temp":"Nhiệt độ","w.feels":"Cảm giác","w.cond":"Trời","w.wind":"Gió","w.gust":"Gió giật","w.hum":"Độ ẩm không khí","w.rain":"Xác suất mưa","w.precip":"Lượng mưa","w.cloud":"Mây","w.press":"Áp suất","w.uv":"UV cao nhất","w.sun":"Bình minh / Hoàng hôn","w.dew":"Điểm sương","w.thilo":"Cao / thấp dự báo","w.windmax":"Gió mạnh nhất","w.winddir":"Hướng gió","w.windsub":"Tốc độ & hướng","s.rainToday":"Xác suất mưa hôm nay","s.rainSub":"Dự báo theo giờ","s.fc10":"Dự báo 10 ngày","s.fc10sub":"Nhiệt độ · mưa","s.sun":"Mặt trời","s.sunSub":"Bình minh · hoàng hôn","s.cmp":"So sánh khu","s.cmpSub":"Nhiệt · ẩm · sức khỏe","s.log":"Nhật ký canh tác","s.logNote":"Ghi chú…","s.logClear":"Xoá tất cả","s.uv":"Chỉ số UV","s.uvSub":"Hiện tại","s.feels":"Cảm giác","s.humid":"Độ ẩm KK","s.press":"Áp suất","s.pressSub":"Khí quyển","s.pLow":"Thấp","s.pHigh":"Cao","s.humidFull":"Độ ẩm không khí",
- "s.plantStatus":"Tình trạng cây giống","s.plantSub":"Đánh giá chi tiết","d.temp":"Nhiệt độ vườn","d.moist":"Độ ẩm đất","d.delta":"Chênh trong/ngoài","d.valve":"Van tưới","d.tavg":"Nhiệt độ trung bình","d.mavg":"Độ ẩm trung bình","d.vpd":"VPD (thiếu hụt ẩm)","d.dew":"Điểm sương","d.risk":"Nguy cơ nấm bệnh","d.times":" lần",
+ "s.plantStatus":"Tình trạng cây giống","s.plantSub":"Đánh giá chi tiết","d.temp":"Nhiệt độ vườn","d.moist":"Độ ẩm đất","d.delta":"Chênh trong/ngoài","d.valve":"Van tưới","d.tavg":"Nhiệt độ trung bình","d.mavg":"Độ ẩm trung bình","d.vpd":"Độ khô không khí","d.dew":"Điểm sương","d.risk":"Nguy cơ nấm bệnh","d.times":" lần",
  "s.cam":"Camera / Hình ảnh","s.camEmpty":"Chưa có ảnh. Tải ảnh lên hoặc bật camera.","s.camUp":"Tải ảnh","s.camStart":"Bật camera","s.camSnap":"Chụp","s.camStop":"Tắt","s.camClear":"Xoá ảnh",
  "s.chartH":"Biểu đồ theo thời gian","s.day":"1 ngày","s.all":"Tất cả","s.week":"7 ngày","c.temp":"Nhiệt độ theo thời gian","c.dist":"Phân bố nhiệt độ","c.distSub":"Trong / ngoài vùng","c.opt":"tối ưu","c.moist":"Độ ẩm đất theo thời gian","c.water":"Số lần tưới theo giờ","c.waterSub":"Tần suất kích hoạt van",
  "s.logH":"Lịch sử sự kiện","s.logSub":"Nhật ký tưới & cảnh báo","s.clearLog":"Xoá nhật ký","th.time":"Thời gian","th.ev":"Sự kiện","th.det":"Chi tiết","s.noev":"Chưa có sự kiện",
@@ -996,12 +1136,15 @@ const DICT={vi:{
  "s.climate":"Temp & Humidity","s.climateSub":"Realtime detail","c.hilo2":"High / low","c.avg":"Average","c.range":"Optimal range","c.onoff":"ON/OFF threshold",
  "s.res":"Farm resources","s.resSub":"Realtime","s.soil":"Soil moisture","s.fav":"Favorable","s.wtoday":"Watered today","s.ineff":"Inefficient","s.opt":"Optimized",
  "s.ctl":"Irrigation control","s.waterNow":"Water now","s.waterStop":"Stop",
+ "s.health":"Garden health","s.healthSub":"Composite index","s.advice":"Smart watering","s.adviceSub":"By forecast & evaporation","s.wateradv":"Watering today","s.wateradata":"Metrics","s.notes":"Today's notes",
+ "hs.temp":"Temp","hs.moist":"Moisture","hs.stable":"Stability","adv.water":"Water now","adv.skip":"Hold watering","adv.hold":"No need yet","adv.et0":"Evap.","adv.rain":"Rain fcst","adv.prob":"Rain prob.",
+ "an.title":"History analytics","an.7":"7 days","an.30":"30 days","an.tempTrend":"Temperature trend","an.moistTrend":"Soil moisture trend","an.waterDay":"Waterings per day","an.nodata":"Not enough history yet",
  "m.real":"Real","m.temp":"Temp","m.rain":"Rain","m.wind":"Wind",
  "s.tempToday":"Temperature today","s.hilo":"High / low today","s.chi":"°C high","s.clo":"°C low","s.chi2":"High","s.clo2":"Low","s.ai":"Smart insight","s.changeLoc":"Change weather location",
  "s.zoneH":"Health by zone","s.zoneSub":"Tap a zone · manage in Settings",
  "s.station":"Weather station","s.stationSub":"Full Open-Meteo data","s.myloc":"My location",
  "w.temp":"Temp","w.feels":"Feels","w.cond":"Sky","w.wind":"Wind","w.gust":"Gust","w.hum":"Air humidity","w.rain":"Rain chance","w.precip":"Precip","w.cloud":"Cloud","w.press":"Pressure","w.uv":"Max UV","w.sun":"Sunrise/Sunset","w.dew":"Dew point","w.thilo":"Forecast high / low","w.windmax":"Max wind","w.winddir":"Wind direction","w.windsub":"Speed & bearing","s.rainToday":"Rain chance today","s.rainSub":"Hourly forecast","s.fc10":"10-day forecast","s.fc10sub":"Temp · rain","s.sun":"Sun","s.sunSub":"Sunrise · sunset","s.cmp":"Compare zones","s.cmpSub":"Temp · moisture · health","s.log":"Farm log","s.logNote":"Note…","s.logClear":"Clear all","s.uv":"UV Index","s.uvSub":"Now","s.feels":"Feels like","s.humid":"Humidity","s.press":"Pressure","s.pressSub":"Atmospheric","s.pLow":"Low","s.pHigh":"High","s.humidFull":"Air humidity",
- "s.plantStatus":"Seedling status","s.plantSub":"Detailed assessment","d.temp":"Garden temp","d.moist":"Soil moisture","d.delta":"Indoor/outdoor Δ","d.valve":"Valve","d.tavg":"Average temperature","d.mavg":"Average moisture","d.vpd":"VPD (vapor deficit)","d.dew":"Dew point","d.risk":"Fungal disease risk","d.times":" times",
+ "s.plantStatus":"Seedling status","s.plantSub":"Detailed assessment","d.temp":"Garden temp","d.moist":"Soil moisture","d.delta":"Indoor/outdoor Δ","d.valve":"Valve","d.tavg":"Average temperature","d.mavg":"Average moisture","d.vpd":"Air dryness","d.dew":"Dew point","d.risk":"Fungal disease risk","d.times":" times",
  "s.cam":"Camera / Image","s.camEmpty":"No image yet. Upload or start camera.","s.camUp":"Upload","s.camStart":"Start camera","s.camSnap":"Capture","s.camStop":"Stop","s.camClear":"Clear",
  "s.chartH":"Charts over time","s.day":"1 day","s.all":"All","s.week":"7 days","c.temp":"Temperature over time","c.dist":"Temperature distribution","c.distSub":"In / out of range","c.opt":"optimal","c.moist":"Soil moisture over time","c.water":"Waterings per hour","c.waterSub":"Valve activations",
  "s.logH":"Event history","s.logSub":"Watering & alert log","s.clearLog":"Clear log","th.time":"Time","th.ev":"Event","th.det":"Detail","s.noev":"No events yet",
@@ -1198,14 +1341,20 @@ function renderCharts(d){
   let inz=0,hot=0,cold=0; d.history.forEach(x=>{ if(x.temp>=cfg.tempMin&&x.temp<=cfg.tempMax)inz++; else if(x.temp>cfg.tempMax)hot++; else cold++; });
   const tot=inz+hot+cold||1; zoneDonut.data.labels=[t("b.inrange"),t("b.high"),t("b.low")]; zoneDonut.data.datasets[0].data=[inz,hot,cold]; zoneDonut.update(); $("donutBig").textContent=Math.round(inz/tot*100)+"%";
   $("donutLegend").innerHTML=[[t("b.inrange"),inz,cssv("--green")],[t("b.high"),hot,cssv("--amber")],[t("b.low"),cold,cssv("--blue")]].map(([n,v,c])=>`<div class="li"><span class="sw" style="background:${c}"></span>${n}<span class="vv">${v}</span></div>`).join("");
-  const bk=new Array(24).fill(0); d.events.filter(e=>e.type==="Tưới").forEach(e=>bk[new Date(e.time).getHours()]++);
-  const hh=[],vv=[]; for(let i=0;i<24;i++){ if(bk[i]>0||i%3===0){hh.push(String(i).padStart(2,"0")+"h");vv.push(bk[i]);} } waterBar.data.labels=hh; waterBar.data.datasets[0].data=vv; waterBar.update();
+  if(chartMode==="live"){ const bk=new Array(24).fill(0); d.events.filter(e=>e.type==="Tưới").forEach(e=>bk[new Date(e.time).getHours()]++);
+    const hh=[],vv=[]; for(let i=0;i<24;i++){ if(bk[i]>0||i%3===0){hh.push(String(i).padStart(2,"0")+"h");vv.push(bk[i]);} } waterBar.data.labels=hh; waterBar.data.datasets[0].data=vv; waterBar.update(); }
 }
-async function loadWeek(){ try{ const r=await fetch("/api/history?days=7"); const j=await r.json(); const p=j.points||[];
-  const lb=p.map(x=>new Date(x.t).toLocaleString(lang==="vi"?"vi-VN":"en-GB",{day:"2-digit",month:"2-digit",hour:"2-digit"}));
+let weekDays=7;
+async function loadWeek(){ try{ const r=await fetch("/api/history?days="+weekDays); const j=await r.json(); const p=j.points||[];
+  const fmt=weekDays>=30?{day:"2-digit",month:"2-digit"}:{day:"2-digit",month:"2-digit",hour:"2-digit"};
+  const lb=p.map(x=>new Date(x.t).toLocaleString(lang==="vi"?"vi-VN":"en-GB",fmt));
   tempChart.data.labels=lb; tempChart.data.datasets[0].data=p.map(x=>x.temp!=null?+(+x.temp).toFixed(1):null); tempChart.update();
-  moistChart.data.labels=lb; moistChart.data.datasets[0].data=p.map(x=>x.moisture!=null?Math.round(x.moisture):null); moistChart.update(); }catch(e){} }
-document.querySelectorAll("[data-rng]").forEach(b=>b.onclick=()=>{ document.querySelectorAll("[data-rng]").forEach(x=>x.classList.remove("on")); b.classList.add("on"); const r=b.dataset.rng; if(r==="week"){chartMode="week";loadWeek();} else {chartMode="live";chartRange=(r==="day"?"day":parseInt(r)); if(lastData)renderCharts(lastData);} });
+  moistChart.data.labels=lb; moistChart.data.datasets[0].data=p.map(x=>x.moisture!=null?Math.round(x.moisture):null); moistChart.update();
+  // Số lần tưới mỗi ngày (từ /api/analytics)
+  try{ const ra=await fetch("/api/analytics?days="+weekDays); const ja=await ra.json(); const days=ja.days||[];
+    waterBar.data.labels=days.map(x=>x.day.slice(5)); waterBar.data.datasets[0].data=days.map(x=>x.water); waterBar.update(); }catch(e){}
+}catch(e){} }
+document.querySelectorAll("[data-rng]").forEach(b=>b.onclick=()=>{ document.querySelectorAll("[data-rng]").forEach(x=>x.classList.remove("on")); b.classList.add("on"); const r=b.dataset.rng; if(r==="week"||r==="month"){chartMode="week";weekDays=(r==="month"?30:7);loadWeek();} else {chartMode="live";chartRange=(r==="day"?"day":parseInt(r)); if(lastData)renderCharts(lastData);} });
 
 /* events */
 const EVK={"Tưới":["ev.water","water"],"Tắt":["ev.stop","stop"],"Cảnh báo":["ev.alert","alert"],"Cấu hình":["ev.config","config"],"Hoãn":["ev.delay","config"]};
@@ -1261,16 +1410,16 @@ function smartAdvice(temp,moist,fav,on){
                  :(dawn?"early morning":morning?"morning":midday?"midday":afternoon?"afternoon":evening?"evening":"night");
   const C=[];
   if(vi){
-    if(veryHot) C.push(`⚠️ Nhiệt vườn ${T}°C rất cao (vượt ${tMax}°C) lúc ${period} — che nắng & tăng thông gió ngay${moist!=null&&moist<mOff?", tưới nhẹ làm mát gốc":""}.`);
+    if(veryHot){ const noSun=hr>=18||hr<6; C.push(`⚠️ Nhiệt vườn ${T}°C rất cao (vượt ${tMax}°C) lúc ${period} — ${noSun?"tăng thông gió & kiểm tra nguồn nhiệt gần cảm biến (đèn, thiết bị)":"che nắng & tăng thông gió ngay"}${moist!=null&&moist<mOff?", tưới nhẹ làm mát gốc":""}.`); }
     if(veryCold) C.push(`⚠️ Nhiệt ${T}°C xuống thấp (dưới ${tMin}°C) ${period} — che chắn giữ ấm, tạm giảm tưới để tránh sốc lạnh.`);
     if(rainSoon&&dry) C.push(`Đất khô ${moist}% nhưng khả năng mưa ${probNext}%${atH} — chờ mưa tự nhiên, khoan tưới cho đỡ úng.`);
     if(rainSoon&&!dry) C.push(`Khả năng mưa ${probNext}%${atH} — hoãn tưới theo lịch để tiết kiệm nước.`);
-    if(dry&&midday) C.push(`Đang ${period} nắng gắt mà đất khô ${moist}% (VPD ${VP}) — tưới lượng nhỏ ngay, tưới bù lúc chiều mát để đỡ bốc hơi.`);
+    if(dry&&midday) C.push(`Đang ${period} nắng gắt mà đất khô ${moist}% (không khí khô ${VP}) — tưới lượng nhỏ ngay, tưới bù lúc chiều mát để đỡ bốc hơi.`);
     if(dry&&(dawn||morning)) C.push(`${cap(period)} (${hr}h) là khung tưới đẹp — đất khô ${moist}%, tưới lúc này để cây hấp thu tốt trước khi nắng lên.`);
     if(dry&&(afternoon||evening)) C.push(`${cap(period)} mát (${hr}h) — đất khô ${moist}%, tưới lúc này giảm bốc hơi và giữ ẩm qua đêm.`);
     if(dry&&night) C.push(`Đất khô ${moist}% ban đêm — hệ thống ${on?"đang tưới":"sẽ tưới"} bù ẩm; tránh tưới quá nhiều gây úng lạnh.`);
     if(uvHigh&&midday) C.push(`UV cao (${W.uvMax}) ${period} — dùng lưới che 30–50% và kiểm tra ẩm gốc thường xuyên hơn.`);
-    if(lowVPD&&moistOK&&!dry&&!on) C.push(`💧 Tiết kiệm nước: VPD thấp (${VP}) & đất còn ẩm ${moist}% — cây thoát hơi ít, có thể giãn/bỏ lượt tưới tới.`);
+    if(lowVPD&&moistOK&&!dry&&!on) C.push(`💧 Tiết kiệm nước: không khí ẩm (độ khô ${VP}) & đất còn ẩm ${moist}% — cây thoát hơi ít, có thể giãn/bỏ lượt tưới tới.`);
     if(hot&&!veryHot&&(midday||afternoon)) C.push(`Nhiệt ${T}°C cao hơn vùng thuận lợi ${tMin}–${tMax}°C lúc ${period} — mở thông gió/che bớt nắng để hạ nhiệt.`);
     if(wet&&on) C.push(`Đất đã đủ ẩm ${moist}% (≥${mOff}%) — nên dừng tưới để tránh ngập úng rễ.`);
     if(windy) C.push(`Gió mạnh ${W.windSpeed.toFixed(1)} m/s ${period} — nước bốc hơi nhanh, ưu tiên tưới sáng sớm hoặc chiều mát.`);
@@ -1278,16 +1427,16 @@ function smartAdvice(temp,moist,fav,on){
       else if(fav>=80) C.push(`Vườn đang tối ưu (${fav}%) lúc ${period}. Duy trì lịch tưới & giám sát hiện tại.`);
       else C.push(`${cap(period)}: điều kiện ổn định — ẩm ${moist!=null?moist+"%":"--"}, nhiệt ${T}°C trong vùng thuận lợi. Tiếp tục theo dõi.`); }
   } else {
-    if(veryHot) C.push(`⚠️ Garden temp ${T}°C very high (over ${tMax}°C) this ${period} — shade & ventilate now${moist!=null&&moist<mOff?", light cooling irrigation":""}.`);
+    if(veryHot){ const noSun=hr>=18||hr<6; C.push(`⚠️ Garden temp ${T}°C very high (over ${tMax}°C) this ${period} — ${noSun?"ventilate & check heat sources near the sensor (lamps, devices)":"shade & ventilate now"}${moist!=null&&moist<mOff?", light cooling irrigation":""}.`); }
     if(veryCold) C.push(`⚠️ Temp ${T}°C dropping low (under ${tMin}°C) this ${period} — cover to keep warm, reduce watering.`);
     if(rainSoon&&dry) C.push(`Soil dry ${moist}% but rain chance ${probNext}%${atH} — wait for natural rain, hold watering.`);
     if(rainSoon&&!dry) C.push(`Rain chance ${probNext}%${atH} — delay scheduled watering to save water.`);
-    if(dry&&midday) C.push(`Harsh ${period} sun with dry soil ${moist}% (VPD ${VP}) — apply a small amount now, top up in the cool evening.`);
+    if(dry&&midday) C.push(`Harsh ${period} sun with dry soil ${moist}% (air dryness ${VP}) — apply a small amount now, top up in the cool evening.`);
     if(dry&&(dawn||morning)) C.push(`${cap(period)} (${hr}:00) is an ideal window — soil dry ${moist}%, water now for good uptake before it heats up.`);
     if(dry&&(afternoon||evening)) C.push(`Cool ${period} (${hr}:00) — soil dry ${moist}%, watering now limits evaporation and holds moisture overnight.`);
     if(dry&&night) C.push(`Soil dry ${moist}% at night — system ${on?"is watering":"will water"}; avoid over-watering to prevent cold waterlogging.`);
     if(uvHigh&&midday) C.push(`High UV (${W.uvMax}) at ${period} — use 30–50% shade net and check root moisture more often.`);
-    if(lowVPD&&moistOK&&!dry&&!on) C.push(`💧 Water-saving: low VPD (${VP}) & soil still moist ${moist}% — low transpiration, you can stretch/skip the next watering.`);
+    if(lowVPD&&moistOK&&!dry&&!on) C.push(`💧 Water-saving: humid air (dryness ${VP}) & soil still moist ${moist}% — low transpiration, you can stretch/skip the next watering.`);
     if(hot&&!veryHot&&(midday||afternoon)) C.push(`Temp ${T}°C above optimal ${tMin}–${tMax}°C this ${period} — ventilate/shade to cool down.`);
     if(wet&&on) C.push(`Soil already wet ${moist}% (≥${mOff}%) — stop watering to avoid waterlogging.`);
     if(windy) C.push(`Strong wind ${W.windSpeed.toFixed(1)} m/s this ${period} — faster evaporation, prefer early morning or cool evening.`);
@@ -1334,6 +1483,31 @@ function renderChecklist(){ const host=$("aiCheck"); if(!host||!lastData)return;
     if(String(id).startsWith("u")) setCustomTodo(getCustomTodo().filter(x=>x.id!==id));
     else { const dd=getDismissed(); if(!dd.includes(id)){dd.push(id);setDismissed(dd);} }
     setTodoDone(getTodoDone().filter(x=>x!==id)); renderChecklist(); }); }
+/* UV thời gian thực (giờ hiện tại) — ban đêm = 0, không lấy UV cực đại ngày */
+function curUV(W){ let uv=null; if(W&&W.hourly&&Array.isArray(W.hourly.uv)&&Array.isArray(W.hourly.time)){ let i=W.hourly.time.findIndex(x=>new Date(x).getHours()===vnHour()); if(i<0)i=0; if(W.hourly.uv[i]!=null)uv=W.hourly.uv[i]; } return uv!=null?Math.max(0,uv):null; }
+/* Lưu ý hôm nay — cảnh báo về NHIỆT ĐỘ / ĐỘ ẨM KHÔNG KHÍ / UV / GIÓ (không phải mưa) */
+function renderNotes(){ const host=$("aiNotes"); if(!host)return; if(!lastData){ host.innerHTML=""; return; }
+  const d=lastData, W=lastWx||{}, vi=lang==="vi";
+  const zd=zoneDelta(getActive());
+  const bt=d.latest&&d.latest.temp!=null?d.latest.temp:null, bm=d.latest&&d.latest.moisture!=null?d.latest.moisture:null;
+  const temp=bt!=null?+(bt+zd.dt).toFixed(1):null;
+  const tMin=cfg.tempMin,tMax=cfg.tempMax, T=temp!=null?temp.toFixed(1):"--";
+  const notes=[];
+  if(temp!=null&&temp>tMax+4) notes.push(vi?`Nhiệt độ rất cao ${T}°C (vượt ${tMax}°C) — thông gió, che nắng, theo dõi cây kỹ.`:`Very hot ${T}°C (over ${tMax}°C) — ventilate, shade, watch plants closely.`);
+  else if(temp!=null&&temp>tMax) notes.push(vi?`Nhiệt độ hơi cao ${T}°C (trên ${tMax}°C) — mở thông gió để hạ nhiệt.`:`Slightly hot ${T}°C (over ${tMax}°C) — ventilate to cool down.`);
+  else if(temp!=null&&temp<tMin-3) notes.push(vi?`Nhiệt độ thấp ${T}°C (dưới ${tMin}°C) — che chắn giữ ấm cho cây.`:`Low temp ${T}°C (under ${tMin}°C) — cover to keep plants warm.`);
+  else if(temp!=null&&temp<tMin) notes.push(vi?`Nhiệt độ hơi thấp ${T}°C (dưới ${tMin}°C) — chú ý giữ ấm.`:`Slightly cold ${T}°C (under ${tMin}°C) — mind warmth.`);
+  const svp=temp!=null?0.6108*Math.exp(17.27*temp/(temp+237.3)):null, vpd=(svp!=null&&W.humidity!=null)?svp*(1-W.humidity/100):null;
+  if(W.humidity!=null&&vpd!=null){
+    if(vpd>1.5) notes.push(vi?`Không khí khô (độ ẩm ${Math.round(W.humidity)}%) — cây thoát hơi nhiều, dễ héo, kiểm tra ẩm gốc.`:`Dry air (humidity ${Math.round(W.humidity)}%) — high transpiration, check root moisture.`);
+    else if(vpd<0.5) notes.push(vi?`Không khí ẩm cao (${Math.round(W.humidity)}%) — đề phòng nấm bệnh, tăng thông thoáng.`:`Very humid air (${Math.round(W.humidity)}%) — watch fungal risk, improve airflow.`);
+  }
+  const uvNow=curUV(W);
+  if(uvNow!=null&&uvNow>=6) notes.push(vi?`Tia UV cao ${uvNow.toFixed(1)} lúc này — dùng lưới che 30–50%.`:`High UV ${uvNow.toFixed(1)} now — use 30–50% shade net.`);
+  if(W.windSpeed!=null&&W.windSpeed>=8) notes.push(vi?`Gió mạnh ${W.windSpeed.toFixed(1)} m/s — cố định giàn/chậu, cây mất nước nhanh.`:`Strong wind ${W.windSpeed.toFixed(1)} m/s — secure trellis/pots, faster water loss.`);
+  if(!notes.length) notes.push(vi?`Nhiệt độ ${T}°C và độ ẩm không khí đang trong ngưỡng ổn định.`:`Temperature ${T}°C and air humidity are within a stable range.`);
+  host.innerHTML=notes.slice(0,3).map(n=>`<div class="ai-note"><span class="ai-note-dot"></span><span>${esc(n)}</span></div>`).join("");
+}
 function addTodo(){ const inp=$("todoInput"); if(!inp)return; const v=inp.value.trim(); if(!v)return; const c=getCustomTodo(); c.push({id:"u"+Date.now(),t:v}); setCustomTodo(c); inp.value=""; renderChecklist(); }
 if($("todoAdd")){ $("todoAdd").onclick=addTodo; $("todoInput").addEventListener("keydown",e=>{ if(e.key==="Enter")addTodo(); }); }
 /* Đếm ngược / thời gian phiên tưới thực */
@@ -1368,9 +1542,9 @@ function render(d){
   // thẻ gộp Nhiệt độ & Độ ẩm
   const cOn=d.valveState==="ON";
   if($("climPill")){ $("climPill").className="pill "+(fav>=70?"":fav>=40?"warn":"bad"); $("climPill").textContent=zoneLab(fav); }
-  const tB2=temp==null?["—",""]:temp>cfg.tempMax?[t("b.high"),"b-warn"]:temp<cfg.tempMin?[t("b.low"),"b-warn"]:[t("b.inrange"),"b-ok"];
+  const tB2=temp==null?["—",""]:temp>cfg.tempMax?[t("b.high"),"b-warn"]:temp<cfg.tempMin?[t("b.low"),"b-cool"]:[t("b.inrange"),"b-ok"];
   if($("climBadge")){ $("climBadge").textContent=tB2[0]; $("climBadge").className="b "+tB2[1]; }
-  const mB2=moist==null?["—",""]:moist<cfg.moistureOn?[t("b.dry"),"b-warn"]:moist>cfg.moistureOff?[t("b.high"),"b-warn"]:[t("b.good"),"b-ok"];
+  const mB2=moist==null?["—",""]:moist<cfg.moistureOn?[t("b.dry"),"b-warn"]:moist>cfg.moistureOff?[t("b.high"),"b-cool"]:[t("b.good"),"b-ok"];
   if($("moistBadge")){ $("moistBadge").textContent=mB2[0]; $("moistBadge").className="b "+mB2[1]; }
   if(d.daily){ if($("climHi"))$("climHi").textContent=Math.round(d.daily.tempMax+_zd.dt); if($("climLo"))$("climLo").textContent=Math.round(d.daily.tempMin+_zd.dt); if($("climTavg"))$("climTavg").textContent=(d.daily.tempAvg+_zd.dt).toFixed(1); if($("climMavg"))$("climMavg").textContent=Math.max(0,Math.min(100,Math.round(d.daily.moistAvg+_zd.dm))); }
   // cao/thấp độ ẩm đất hôm nay (tính từ history, theo khu)
@@ -1398,7 +1572,7 @@ function render(d){
   $("tempDesc").textContent="SHT31 — "+cfg.tempMin+"–"+cfg.tempMax+"°C"; $("moistDesc").textContent="ON "+cfg.moistureOn+"% / OFF "+cfg.moistureOff+"%";
   // plant status detail
   $("dTemp").textContent=temp!=null?temp.toFixed(1):"--"; $("dMoist").textContent=moist!=null?moist:"--"; $("dValve").textContent=on?t("st.open"):t("st.closed");
-  const tB=temp==null?["—",""]:temp>cfg.tempMax?[t("b.high"),"b-warn"]:temp<cfg.tempMin?[t("b.low"),"b-warn"]:[t("b.inrange"),"b-ok"];
+  const tB=temp==null?["—",""]:temp>cfg.tempMax?[t("b.high"),"b-warn"]:temp<cfg.tempMin?[t("b.low"),"b-cool"]:[t("b.inrange"),"b-ok"];
   $("dTempB").textContent=tB[0]; $("dTempB").className="b "+tB[1];
   const mB=moist==null?["—",""]:moist<cfg.moistureOn?[t("b.dry"),"b-warn"]:[t("b.good"),"b-ok"];
   $("dMoistB").textContent=mB[0]; $("dMoistB").className="b "+mB[1];
@@ -1408,23 +1582,61 @@ function render(d){
   if($("dVpd")){ if(Tair!=null&&RH!=null){ const svp=0.6108*Math.exp(17.27*Tair/(Tair+237.3)); const vpd=svp*(1-RH/100);
       $("dVpd").textContent=vpd.toFixed(2);
       // VPD tối ưu cho cây ~0.8–1.2 kPa
-      const vb=vpd<0.4?[t("b.low"),"b-warn"]:vpd>1.6?[t("b.high"),"b-warn"]:[t("b.inrange"),"b-ok"]; $("dVpdB").textContent=vb[0]; $("dVpdB").className="b "+vb[1];
+      const vb=vpd<0.4?[t("b.low"),"b-cool"]:vpd>1.6?[t("b.high"),"b-warn"]:[t("b.inrange"),"b-ok"]; $("dVpdB").textContent=vb[0]; $("dVpdB").className="b "+vb[1];
     } else { $("dVpd").textContent="--"; $("dVpdB").textContent="—"; $("dVpdB").className="b"; } }
   if($("dDew")){ if(Tair!=null&&RH!=null&&RH>0){ const al=Math.log(RH/100)+17.27*Tair/(237.3+Tair); $("dDew").textContent=(237.3*al/(17.27-al)).toFixed(1); } else $("dDew").textContent="--"; }
-  if($("dRisk")){ let r=["—",""]; if(RH!=null){ if(RH>=85&&Tair!=null&&Tair>=18&&Tair<=28) r=[lang==="vi"?"Cao":"High","b-warn"]; else if(RH>=75) r=[lang==="vi"?"Trung bình":"Medium","b-warn"]; else r=[lang==="vi"?"Thấp":"Low","b-ok"]; }
+  if($("dRisk")){ let r=["—",""]; if(RH!=null){ if(RH>=85&&Tair!=null&&Tair>=18&&Tair<=28) r=[lang==="vi"?"Cao":"High","b-bad"]; else if(RH>=75) r=[lang==="vi"?"Trung bình":"Medium","b-warn"]; else r=[lang==="vi"?"Thấp":"Low","b-ok"]; }
     $("dRisk").textContent=r[0]; $("dRiskB").textContent=RH!=null?(RH>=75?(lang==="vi"?"Ẩm cao":"Humid"):(lang==="vi"?"Khô ráo":"Dry")):"—"; $("dRiskB").className="b "+r[1]; }
   if($("dWaterN")) $("dWaterN").textContent=d.stats.wateringToday||0;
   const psOk=fav>=70&&(temp==null||temp<=cfg.tempMax); $("psBadge").className="pill "+(fav>=70?"":fav>=40?"warn":"bad"); $("psBadge").textContent=zoneLab(fav);
   // AI — gợi ý thông minh đa yếu tố, ưu tiên theo mức khẩn cấp
   const tips=smartAdvice(temp,moist,fav,on);
   $("aiMsg").textContent=tips[0]||"";
-  renderChecklist();
+  renderChecklist(); renderNotes();
   const sc=cfg.schedule||[]; const tasks=sc.length?sc.slice(0,3).map(tm=>({nm:t("task.sched")+tm,c:t("task.set")})):[{nm:t("task.auto"),c:t("task.running")},{nm:t("task.mon"),c:t("task.running")}];
   const ht=$("helloTasks"); if(ht) ht.innerHTML=tasks.map(x=>{ const isSet=x.c===t("task.set"); return `<span class="htask"><span class="dot${isSet?" set":""}"></span>${x.nm}<span class="st">· ${x.c}</span></span>`; }).join("");
   const bd=$("eventBody"); if(!d.events.length) bd.innerHTML=`<tr><td colspan="3" class="empty">${t("s.noev")}</td></tr>`;
   else bd.innerHTML=d.events.slice(0,14).map(e=>{ const k=EVK[e.type]||["ev.config","config"]; return `<tr><td>${fmtT(e.time)}</td><td><span class="evp ${k[1]}">${t(k[0])}</span></td><td>${esc(evDetail(e))}</td></tr>`; }).join("");
-  renderZones(); renderCam(); renderCharts(d); renderCompare(); equalizeMonrow();
+  renderZones(); renderCam(); renderCharts(d); renderCompare(); equalizeMonrow(); renderHealth(d);
   // KHÔNG gọi syncDrawer ở đây → tránh kéo thanh trượt / gõ ô khu bị nhảy về mỗi 5 giây
+}
+/* ===== SỨC KHỎE VƯỜN — chỉ số tổng hợp 0–100 ===== */
+function bandScore(v,lo,hi){ if(v==null||isNaN(v))return null; if(v>=lo&&v<=hi)return 100; const span=Math.max(1,(hi-lo)); const d=v<lo?lo-v:v-hi; return Math.max(0,Math.round(100-(d/span)*140)); }
+function renderHealth(d){ const el=$("hsScore"); if(!el)return; const cf=d.config||cfg;
+  const T=d.latest?d.latest.temp:null, M=d.latest?d.latest.moisture:null;
+  const sT=bandScore(T,cf.tempMin,cf.tempMax);
+  const sM=bandScore(M,cf.moistureOn,cf.moistureOff);
+  // độ ổn định: % mẫu trong vùng thuận lợi (từ stats) — thiếu thì coi như trung tính
+  let sS=d.stats&&typeof d.stats.favorablePercent==="number"?d.stats.favorablePercent:null;
+  // cảm biến cũ → phạt điểm
+  let fresh=1; if(d.latest&&d.latest.time){ const age=(Date.now()-new Date(d.latest.time).getTime())/60000; if(age>15)fresh=0.5; if(age>60)fresh=0.2; }
+  const parts=[[sT,0.4],[sM,0.4],[sS,0.2]].filter(p=>p[0]!=null);
+  let score=null;
+  if(parts.length){ const wsum=parts.reduce((a,p)=>a+p[1],0); score=Math.round(parts.reduce((a,p)=>a+p[0]*p[1],0)/wsum*fresh); }
+  const col=score==null?cssv("--muted"):score>=80?cssv("--green"):score>=55?cssv("--amber"):cssv("--terra");
+  el.textContent=score==null?"--":score;
+  const ring=$("hsRing"); if(ring)ring.style.background=`conic-gradient(${col} ${(score||0)*3.6}deg, var(--line) 0deg)`;
+  const bd=$("hsBadge"); if(bd){ bd.textContent=score==null?"—":score>=80?(lang==="vi"?"Tốt":"Good"):score>=55?(lang==="vi"?"Khá":"Fair"):(lang==="vi"?"Cần chú ý":"Attention"); bd.style.color=col; }
+  const msg=$("hsMsg"); if(msg){ msg.textContent=score==null?(lang==="vi"?"Chưa có dữ liệu cảm biến để đánh giá.":"No sensor data to evaluate yet."):
+    score>=80?(lang==="vi"?"Vườn đang trong điều kiện lý tưởng. Duy trì chế độ hiện tại.":"Garden is in ideal condition. Keep current settings."):
+    (sM!=null&&sM<sT?(lang==="vi"?"Độ ẩm đất là yếu tố cần cải thiện nhất.":"Soil moisture needs the most attention."):(lang==="vi"?"Nhiệt độ là yếu tố cần theo dõi nhất.":"Temperature is the main factor to watch.")); }
+  const bars=$("hsBars"); if(bars){ const row=(k,s)=>`<div class="hsb"><span class="k">${k}</span><span class="t"><span style="width:${s==null?0:s}%;background:${s==null?cssv("--muted"):s>=80?cssv("--green"):s>=55?cssv("--amber"):cssv("--terra")}"></span></span><span class="val">${s==null?"—":s}</span></div>`;
+    bars.innerHTML=row(t("hs.temp"),sT)+row(t("hs.moist"),sM)+row(t("hs.stable"),sS); }
+}
+/* ===== TƯỚI THÔNG MINH — đề xuất theo dự báo & bốc hơi ===== */
+async function loadAdvice(){ try{ const r=await fetch("/api/irrigation-advice"); if(!r.ok)return; renderAdvice(await r.json()); }catch(e){} }
+function renderAdvice(a){ if(!a||a.error)return; const dot=$("advDot"),act=$("advAct"),sug=$("advSuggest"),rs=$("advReason"),mt=$("advMetrics"),bd=$("advBadge"),tip=$("advTip"); if(!act)return;
+  const map={water:{c:cssv("--blue"),k:"adv.water"},skip:{c:cssv("--green"),k:"adv.skip"},hold:{c:cssv("--green"),k:"adv.hold"}};
+  const m=map[a.action]||map.hold;
+  if(dot)dot.style.background=m.c; act.textContent=t(m.k);
+  if(sug)sug.textContent=a.suggestSec?(lang==="vi"?`Đề xuất tưới ~${a.suggestSec}s`:`Suggested ~${a.suggestSec}s`):(a.metrics&&a.metrics.moisture!=null?(lang==="vi"?`Độ ẩm đất ${a.metrics.moisture}%`:`Soil ${a.metrics.moisture}%`):"—");
+  if(bd){ bd.textContent=a.level==="urgent"?(lang==="vi"?"Ưu tiên":"Priority"):a.level==="good"?(lang==="vi"?"Ổn":"OK"):(lang==="vi"?"Bình thường":"Normal"); bd.style.color=m.c; }
+  if(rs)rs.textContent=(lang==="vi"?a.reason:a.reason); // server trả tiếng Việt; giữ nguyên
+  if(mt&&a.metrics){ const M=a.metrics; mt.innerHTML=
+    `<div class="advm"><b>${M.et0}</b><span>${t("adv.et0")} (mm)</span></div>`+
+    `<div class="advm"><b>${M.rainToday}</b><span>${t("adv.rain")} (mm)</span></div>`+
+    `<div class="advm"><b>${M.probToday}%</b><span>${t("adv.prob")}</span></div>`; }
+  if(tip)tip.innerHTML=`<svg viewBox="0 0 24 24" style="width:13px;height:13px;flex:none;stroke:var(--muted);fill:none;stroke-width:2;margin-top:1px"><path d="M12 3v1M12 20v1M4 12H3M21 12h-1M6 6l.7.7M17.3 17.3l.7.7M6 18l.7-.7M17.3 6.7l.7-.7"/><circle cx="12" cy="12" r="4"/></svg><span>${a.tip||""}</span>`;
 }
 function windText(deg){ const dirs=lang==="vi"?["Bắc","Đông Bắc","Đông","Đông Nam","Nam","Tây Nam","Tây","Tây Bắc"]:["N","NE","E","SE","S","SW","W","NW"]; return dirs[Math.round((((deg%360)+360)%360)/45)%8]; }
 /* icon mưa theo xác suất */
@@ -1792,9 +2004,31 @@ $("waterNow").onclick=e=>valve("on",e.currentTarget); $("waterStop").onclick=e=>
 function startAuto(){timer=setInterval(refresh,5000);} function stopAuto(){clearInterval(timer);}
 $("autoToggle").onchange=e=>e.target.checked?startAuto():stopAuto();
 
-let demoTimer=null,dm=60,dv=false;
-function demoStep(){ let tt=28.5+3.5*Math.sin(Date.now()/40000)+(Math.random()-.5)*1.2; if(Math.random()<.12)tt+=6+Math.random()*4; tt=Math.max(20,Math.min(42,tt)); if(dm<cfg.moistureOn)dv=true; if(dm>=cfg.moistureOff)dv=false; dm+=dv?(2.5+Math.random()*2):-(1.3+Math.random()*1.4); dm=Math.max(18,Math.min(96,dm)); fetch(`/api/update?temp=${tt.toFixed(1)}&moisture=${Math.round(dm)}`).then(refresh).catch(()=>{}); }
-$("demoToggle").onchange=e=>{ if(e.target.checked){demoStep();demoTimer=setInterval(demoStep,1200);} else clearInterval(demoTimer); };
+/* ===== DEMO BÁM THEO THỜI TIẾT THẬT TẠI VỊ TRÍ NGƯỜI DÙNG =====
+   Nhiệt độ vườn = nhiệt độ không khí thật (từ Open-Meteo theo toạ độ) + hiệu chỉnh
+   nắng/mây/ngày-đêm, biến thiên mượt (easing) nên ổn định, không nhảy loạn.
+   Độ ẩm đất mô phỏng chu kỳ bốc hơi–tưới thực: nóng & không khí khô → khô nhanh hơn. */
+let demoTimer=null, dm=null, dv=false, dTemp=null;
+function demoStep(){
+  const airT=(lastWx&&typeof lastWx.temp==="number")?lastWx.temp:27;
+  const isDay=lastWx?!!lastWx.isDay:(()=>{const h=vnHour?vnHour():new Date().getHours();return h>=6&&h<18;})();
+  const cloud=(lastWx&&typeof lastWx.cloud==="number")?lastWx.cloud:50;
+  // Ban ngày trời quang → vườn ấm hơn không khí chút; nhiều mây/ban đêm → sát hoặc mát hơn
+  const sunBoost=isDay?(1.4*(1-cloud/100)):-0.7;
+  const targetT=airT+sunBoost;
+  if(dTemp===null)dTemp=targetT;
+  dTemp+=(targetT-dTemp)*0.18+(Math.random()-0.5)*0.14;   // easing mượt + nhiễu rất nhỏ
+  const tt=Math.max(0,Math.round(dTemp*10)/10);
+  // Độ ẩm đất: bốc hơi phụ thuộc nhiệt độ & độ ẩm không khí; tưới khi dưới ngưỡng
+  const hum=(lastWx&&typeof lastWx.humidity==="number")?lastWx.humidity:70;
+  if(dm===null)dm=(cfg.moistureOn+cfg.moistureOff)/2;
+  if(dm<cfg.moistureOn)dv=true; if(dm>=cfg.moistureOff)dv=false;
+  const dryRate=0.35+Math.max(0,(tt-25))*0.05+Math.max(0,(60-hum))*0.006;   // nóng & khô → khô nhanh
+  dm+=dv?(2.2+Math.random()*0.6):-(dryRate+Math.random()*0.15);
+  dm=Math.max(15,Math.min(95,dm));
+  fetch(`/api/update?temp=${tt.toFixed(1)}&moisture=${Math.round(dm)}`).then(refresh).catch(()=>{});
+}
+$("demoToggle").onchange=e=>{ if(e.target.checked){ dTemp=null; dm=null; loadWeather(); demoStep(); demoTimer=setInterval(demoStep,3000);} else clearInterval(demoTimer); };
 
 ["on","off","tmin","tmax","dur"].forEach(id=>$("s-"+id).oninput=()=>$("v-"+id).textContent=$("s-"+id).value);
 $("rainTh").oninput=e=>$("rainThV").textContent=e.target.value;
@@ -1882,11 +2116,15 @@ $("pwBtn").onclick=async()=>{ const m=$("pwMsg"),o=$("pwOld").value,n=$("pwNew")
   try{ const r=await fetch("/api/change-password",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({oldPass:o,newPass:n})}); const j=await r.json(); if(j.ok){m.textContent="✓";m.className="msg ok show";$("pwOld").value=$("pwNew").value=$("pwConfirm").value="";} else {m.textContent=j.error||"Lỗi";m.className="msg err show";} }catch(e){m.textContent="Lỗi";m.className="msg err show";} };
 
 /* ===== WIDGET LAYOUT — sắp xếp/thêm/ẩn như widget Apple ===== */
-const WIDGET_NAMES={valve:"s.ctl",climate:"s.climate",map:"e.map",ai:"s.ai",wind:"w.winddir",zonehealth:"s.zoneH",temp:"s.tempToday",samples:"s.samples",zones:"s.zones",rain:"s.rainToday",forecast:"s.fc10",sun:"s.sun",compare:"s.cmp",farmlog:"s.log",uv:"s.uv",feels:"s.feels",humid:"s.humid",press:"s.press"};
-const DEFAULT_ORDER=["valve","climate","map","ai","wind","zonehealth","temp","samples","zones","rain","forecast","sun","compare","farmlog","uv","feels","humid","press"];
+const WIDGET_NAMES={valve:"s.ctl",climate:"s.climate",map:"e.map",ai:"s.ai",health:"s.health",wind:"w.winddir",zonehealth:"s.zoneH",temp:"s.tempToday",samples:"s.samples",zones:"s.zones",rain:"s.rainToday",forecast:"s.fc10",sun:"s.sun",compare:"s.cmp",farmlog:"s.log",uv:"s.uv",feels:"s.feels",humid:"s.humid",press:"s.press"};
+const DEFAULT_ORDER=["valve","climate","map","ai","health","wind","zonehealth","temp","samples","zones","rain","forecast","sun","compare","farmlog","uv","feels","humid","press"];
 let layout=JSON.parse(localStorage.getItem("sporo-layout")||"null"); if(!layout||!Array.isArray(layout.order)) layout={order:DEFAULT_ORDER.slice(),hidden:[]};
 // migrate: gộp resource+gauges → climate (đặt đúng vị trí resource cũ)
 if(layout.order.includes("resource")||layout.order.includes("gauges")){ const i=layout.order.indexOf("resource"); layout.order=layout.order.filter(x=>x!=="resource"&&x!=="gauges"); layout.order.splice(i<0?1:i,0,"climate"); layout.hidden=(layout.hidden||[]).filter(x=>x!=="resource"&&x!=="gauges"); }
+// migrate: gộp "advice" (Tưới thông minh) vào "ai" (Gợi ý thông minh) → bỏ khỏi layout cũ
+if(layout.order.includes("advice")||(layout.hidden||[]).includes("advice")){ layout.order=layout.order.filter(x=>x!=="advice"); layout.hidden=(layout.hidden||[]).filter(x=>x!=="advice"); if(layout.sizes)delete layout.sizes.advice; }
+// ai giờ chứa cả tưới thông minh → cần cao hơn để không tràn
+if(layout.sizes&&(layout.sizes.ai==="S"||layout.sizes.ai==="SS"))layout.sizes.ai="SQ";
 // migrate: chỉ giữ cỡ hợp lệ S/M/L/XL (bỏ số cột cũ)
 if(layout.sizes){ for(const k in layout.sizes){ if(!["SS","S","SQ","M","L"].includes(layout.sizes[k]))delete layout.sizes[k]; } }
 function saveLayout(){ localStorage.setItem("sporo-layout",JSON.stringify(layout)); }
@@ -1899,7 +2137,7 @@ const SIZES={SS:[3,3],S:[6,3],SQ:[6,6],M:[12,3],L:[12,6]};
 const SIZE_ORDER=["SS","S","SQ","M","L"];
 const SIZE_LBL={vi:{SS:"Nhỏ",S:"Ngang",SQ:"Vuông",M:"Rộng",L:"Lớn"},en:{SS:"Small",S:"Wide",SQ:"Square",M:"Full",L:"Large"}};
 // [mặc định, nhỏ nhất, lớn nhất] — giới hạn để không mất thông tin
-const WDEF={valve:["S","S","M"],climate:["S","S","L"],map:["M","S","L"],ai:["S","S","L"],wind:["SS","SS","SQ"],zonehealth:["S","SS","L"],temp:["S","S","L"],samples:["SS","SS","S"],zones:["SS","SS","S"],rain:["M","S","L"],forecast:["L","S","L"],sun:["S","SS","SQ"],compare:["S","SS","L"],farmlog:["S","SS","L"],uv:["SS","SS","S"],feels:["SS","SS","S"],humid:["SS","SS","S"],press:["SS","SS","S"]};
+const WDEF={valve:["S","S","M"],climate:["S","S","L"],map:["M","S","L"],ai:["SQ","S","L"],health:["S","S","L"],wind:["SS","SS","SQ"],zonehealth:["S","SS","L"],temp:["S","S","L"],samples:["SS","SS","S"],zones:["SS","SS","S"],rain:["M","S","L"],forecast:["L","S","L"],sun:["S","SS","SQ"],compare:["S","SS","L"],farmlog:["S","SS","L"],uv:["SS","SS","S"],feels:["SS","SS","S"],humid:["SS","SS","S"],press:["SS","SS","S"]};
 function szClamp(id,sz){ const d=WDEF[id]||["M","S","XL"]; const lo=SIZE_ORDER.indexOf(d[1]),hi=SIZE_ORDER.indexOf(d[2]); let i=SIZE_ORDER.indexOf(sz); if(i<0)i=SIZE_ORDER.indexOf(d[0]); return SIZE_ORDER[Math.max(lo,Math.min(hi,i))]; }
 function widgetSize(id){ const s=layout.sizes&&layout.sizes[id]; return szClamp(id,SIZE_ORDER.includes(s)?s:(WDEF[id]?WDEF[id][0]:"M")); }
 function setWidgetSize(id,sz){ layout.sizes=layout.sizes||{}; layout.sizes[id]=szClamp(id,sz); saveLayout(); applyLayout(); }
@@ -1953,7 +2191,10 @@ window.addEventListener("resize",schedulePack);
 
 /* init */
 initDate(); buildCharts(); buildCompass(); initResizers(); applyLayout(); applyLang(); renderZones(); renderCam(); fillLogSelect(); renderLog(); switchTab("secOv"); refresh(); startAuto(); loadWeather(); setInterval(loadWeather,600000); setInterval(()=>{ if(lastWx)renderSun(lastWx); },60000);
+loadAdvice(); setInterval(loadAdvice,900000);
 window.addEventListener("load",schedulePack); setTimeout(schedulePack,400);
+/* PWA: đăng ký service worker để cài như app điện thoại */
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
 </script>
 </body>
 </html>

@@ -325,8 +325,14 @@ function fireAlert(key, text) {
   lastAlertAt[key] = now;
   sendTelegram(text);
 }
+function vnHourNum() { return parseInt(new Date().toLocaleTimeString("en-GB", { timeZone: "Asia/Ho_Chi_Minh", hour12: false, hour: "2-digit", minute: "2-digit" }), 10) || 0; }
+function isNightVN() { const h = vnHourNum(); return h < 6 || h >= 18; }
 function checkAlerts(temp, moisture) {
-  if (temp > config.tempMax + 5) fireAlert("hot", `<b>CẢNH BÁO — NHIỆT ĐỘ CAO</b>\nNhiệt độ vườn hiện tại: <b>${temp}°C</b>\nNgưỡng an toàn: tối đa ${config.tempMax + 5}°C\nKhuyến nghị: Che nắng, tăng thông gió, tưới làm mát gốc.\nThời điểm: ${vnNow()}`);
+  const night = isNightVN();
+  const hotTip = night
+    ? "Tăng thông gió và kiểm tra nguồn nhiệt gần cảm biến (đèn, thiết bị toả nhiệt). Nhiệt độ cao vào ban đêm là bất thường."
+    : "Che nắng, tăng thông gió, tưới làm mát gốc.";
+  if (temp > config.tempMax + 5) fireAlert("hot", `<b>CẢNH BÁO — NHIỆT ĐỘ CAO</b>\nNhiệt độ vườn hiện tại: <b>${temp}°C</b>\nNgưỡng an toàn: tối đa ${config.tempMax + 5}°C\nKhuyến nghị: ${hotTip}\nThời điểm: ${vnNow()}`);
   else if (temp < config.tempMin - 5) fireAlert("cold", `<b>CẢNH BÁO — NHIỆT ĐỘ THẤP</b>\nNhiệt độ vườn hiện tại: <b>${temp}°C</b>\nNgưỡng an toàn: tối thiểu ${config.tempMin - 5}°C\nKhuyến nghị: Che chắn, giữ ấm cho cây.\nThời điểm: ${vnNow()}`);
   else lastAlertAt.hot = lastAlertAt.cold = 0;
   if (moisture < config.moistureOn - 10) fireAlert("dry", `<b>CẢNH BÁO — ĐẤT QUÁ KHÔ</b>\nĐộ ẩm đất hiện tại: <b>${moisture}%</b>\nNgưỡng tưới: ${config.moistureOn}%\nKhuyến nghị: Kiểm tra hệ thống tưới hoặc gõ /water để tưới ngay.\nThời điểm: ${vnNow()}`);
@@ -557,6 +563,102 @@ app.get("/api/history", requireAuth, async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: "history error" });
   }
+});
+
+// ---- Phân tích lịch sử theo NGÀY (min/max/avg + số lần tưới) cho biểu đồ dài hạn ----
+app.get("/api/analytics", requireAuth, async (req, res) => {
+  const days = Math.min(60, Math.max(1, parseInt(req.query.days) || 7));
+  // Gộp số lần tưới theo ngày từ sự kiện trong RAM (đủ dùng cho 60 ngày gần nhất)
+  const waterByDay = {};
+  events.filter(e => e.type === "Tưới").forEach(e => {
+    const k = new Date(e.time).toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" });
+    waterByDay[k] = (waterByDay[k] || 0) + 1;
+  });
+  if (!USE_DB || !pool) {
+    // Không có DB: gộp từ history trong RAM
+    const byDay = {};
+    history.forEach(h => {
+      const k = new Date(h.time).toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" });
+      (byDay[k] = byDay[k] || []).push(h);
+    });
+    const rows = Object.keys(byDay).sort().slice(-days).map(k => {
+      const T = byDay[k].map(x => x.temp), M = byDay[k].map(x => x.moisture);
+      return {
+        day: k, samples: byDay[k].length,
+        tempMin: Math.min(...T), tempMax: Math.max(...T), tempAvg: T.reduce((a, b) => a + b, 0) / T.length,
+        moistMin: Math.min(...M), moistMax: Math.max(...M), moistAvg: M.reduce((a, b) => a + b, 0) / M.length,
+        water: waterByDay[k] || 0
+      };
+    });
+    return res.json({ db: false, days: rows });
+  }
+  try {
+    const r = await pool.query(
+      `SELECT to_char((ts AT TIME ZONE 'Asia/Ho_Chi_Minh')::date, 'YYYY-MM-DD') AS day,
+              count(*)::int AS samples,
+              min(temp) AS tmin, max(temp) AS tmax, avg(temp) AS tavg,
+              min(moisture) AS mmin, max(moisture) AS mmax, avg(moisture) AS mavg
+       FROM readings WHERE ts > now() - (($1)::text || ' days')::interval
+       GROUP BY day ORDER BY day`, [String(days)]);
+    const rows = r.rows.map(x => ({
+      day: x.day, samples: x.samples,
+      tempMin: Number(x.tmin), tempMax: Number(x.tmax), tempAvg: Number(x.tavg),
+      moistMin: Number(x.mmin), moistMax: Number(x.mmax), moistAvg: Number(x.mavg),
+      water: waterByDay[x.day] || 0
+    }));
+    res.json({ db: true, days: rows });
+  } catch (e) { res.status(500).json({ error: "analytics error" }); }
+});
+
+// ---- TƯỚI THÔNG MINH: đề xuất dựa trên dự báo mưa + bốc hơi (ET0) ----
+let adviceCache = { at: 0, data: null };
+app.get("/api/irrigation-advice", requireAuth, async (req, res) => {
+  try {
+    if (adviceCache.data && Date.now() - adviceCache.at < 15 * 60 * 1000) return res.json(adviceCache.data);
+    const lat = config.weatherLat, lon = config.weatherLon;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&daily=precipitation_sum,precipitation_probability_max,et0_fao_evapotranspiration,temperature_2m_max` +
+      `&timezone=auto&forecast_days=3`;
+    const j = await (await fetch(url)).json();
+    const d = j.daily || {};
+    const rainToday = (d.precipitation_sum || [])[0] ?? 0;
+    const rainTmrw = (d.precipitation_sum || [])[1] ?? 0;
+    const probToday = (d.precipitation_probability_max || [])[0] ?? 0;
+    const probTmrw = (d.precipitation_probability_max || [])[1] ?? 0;
+    const et0 = (d.et0_fao_evapotranspiration || [])[0] ?? 0;   // mm nước bốc hơi hôm nay
+    const moist = latest.moisture;
+    const thr = config.rainProbThreshold || 70;
+
+    // Nhu cầu nước ≈ ET0 (mm) trừ đi lượng mưa dự kiến
+    const deficit = Math.max(0, et0 - rainToday);
+    let action = "water", level = "normal", reason = "", detail = "";
+    if (probToday >= thr || rainToday >= 3) {
+      action = "skip"; level = "good";
+      reason = "Hôm nay khả năng mưa cao — nên hoãn tưới để tiết kiệm nước.";
+      detail = `Dự báo mưa: ${rainToday.toFixed(1)} mm · xác suất ${Math.round(probToday)}%.`;
+    } else if (moist != null && moist < config.moistureOn) {
+      action = "water"; level = "urgent";
+      reason = "Đất đang khô dưới ngưỡng — nên tưới ngay.";
+      detail = `Độ ẩm đất ${moist}% (ngưỡng ${config.moistureOn}%). Bốc hơi hôm nay ~${et0.toFixed(1)} mm.`;
+    } else if (deficit >= 3.5) {
+      action = "water"; level = "normal";
+      reason = "Trời nắng, bốc hơi cao — nên tưới vào sáng sớm hoặc chiều mát.";
+      detail = `Thiếu hụt nước ~${deficit.toFixed(1)} mm (bốc hơi ${et0.toFixed(1)} mm, mưa ${rainToday.toFixed(1)} mm).`;
+    } else {
+      action = "hold"; level = "good";
+      reason = "Độ ẩm ổn định, nhu cầu nước thấp — chưa cần tưới thêm.";
+      detail = `Bốc hơi ${et0.toFixed(1)} mm · mưa ${rainToday.toFixed(1)} mm · độ ẩm ${moist != null ? moist + "%" : "—"}.`;
+    }
+    // Gợi ý lượng tưới quy đổi ra giây (giả định 1s ≈ 0.4 mm — chỉ minh hoạ, chủ vườn hiệu chỉnh)
+    const suggestSec = action === "water" ? Math.max(config.waterDuration, Math.round(Math.max(deficit, et0) / 0.4)) : 0;
+    const out = {
+      action, level, reason, detail,
+      metrics: { et0: +et0.toFixed(1), rainToday: +rainToday.toFixed(1), rainTmrw: +rainTmrw.toFixed(1), probToday: Math.round(probToday), probTmrw: Math.round(probTmrw), deficit: +deficit.toFixed(1), moisture: moist },
+      suggestSec, tip: "Tưới tốt nhất vào 5–7h sáng hoặc sau 17h để giảm bốc hơi."
+    };
+    adviceCache = { at: Date.now(), data: out };
+    res.json(out);
+  } catch (e) { res.status(500).json({ error: "advice error" }); }
 });
 
 // ---- Xoá toàn bộ nhật ký sự kiện ----
