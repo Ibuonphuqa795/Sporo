@@ -326,10 +326,10 @@ function fireAlert(key, text) {
   sendTelegram(text);
 }
 function checkAlerts(temp, moisture) {
-  if (temp > config.tempMax + 5) fireAlert("hot", `⚠️ <b>CẢNH BÁO — Nhiệt độ cao</b>\n🌡 Nhiệt độ vườn: <b>${temp}°C</b> (vượt ngưỡng ${config.tempMax + 5}°C)\n💡 Khuyến nghị: che nắng, tăng thông gió, tưới làm mát gốc.\n🕐 ${vnNow()}`);
-  else if (temp < config.tempMin - 5) fireAlert("cold", `⚠️ <b>CẢNH BÁO — Nhiệt độ thấp</b>\n🌡 Nhiệt độ vườn: <b>${temp}°C</b> (dưới ngưỡng ${config.tempMin - 5}°C)\n💡 Khuyến nghị: che chắn giữ ấm cho cây.\n🕐 ${vnNow()}`);
+  if (temp > config.tempMax + 5) fireAlert("hot", `<b>CẢNH BÁO — NHIỆT ĐỘ CAO</b>\nNhiệt độ vườn hiện tại: <b>${temp}°C</b>\nNgưỡng an toàn: tối đa ${config.tempMax + 5}°C\nKhuyến nghị: Che nắng, tăng thông gió, tưới làm mát gốc.\nThời điểm: ${vnNow()}`);
+  else if (temp < config.tempMin - 5) fireAlert("cold", `<b>CẢNH BÁO — NHIỆT ĐỘ THẤP</b>\nNhiệt độ vườn hiện tại: <b>${temp}°C</b>\nNgưỡng an toàn: tối thiểu ${config.tempMin - 5}°C\nKhuyến nghị: Che chắn, giữ ấm cho cây.\nThời điểm: ${vnNow()}`);
   else lastAlertAt.hot = lastAlertAt.cold = 0;
-  if (moisture < config.moistureOn - 10) fireAlert("dry", `💧 <b>CẢNH BÁO — Đất quá khô</b>\nĐộ ẩm đất: <b>${moisture}%</b> (dưới ngưỡng tưới ${config.moistureOn}%)\n💡 Kiểm tra hệ thống tưới; gõ /water để tưới ngay.\n🕐 ${vnNow()}`);
+  if (moisture < config.moistureOn - 10) fireAlert("dry", `<b>CẢNH BÁO — ĐẤT QUÁ KHÔ</b>\nĐộ ẩm đất hiện tại: <b>${moisture}%</b>\nNgưỡng tưới: ${config.moistureOn}%\nKhuyến nghị: Kiểm tra hệ thống tưới hoặc gõ /water để tưới ngay.\nThời điểm: ${vnNow()}`);
   else lastAlertAt.dry = 0;
 }
 // Watchdog: cảnh báo khi ESP32 ngừng gửi dữ liệu quá lâu
@@ -342,7 +342,7 @@ function checkDisconnect() {
   if (gap > DISCONNECT_MS && !disconnectAlerted) {
     disconnectAlerted = true;
     const mins = Math.round(gap / 60000);
-    sendTelegram(`🔌 <b>MẤT KẾT NỐI CẢM BIẾN</b>\nHệ thống không nhận được dữ liệu từ ESP32 trong <b>${mins} phút</b>.\n💡 Vui lòng kiểm tra nguồn điện và kết nối mạng của thiết bị.\n🕐 ${vnNow()}`);
+    sendTelegram(`<b>CẢNH BÁO — MẤT KẾT NỐI CẢM BIẾN</b>\nHệ thống không nhận được dữ liệu từ thiết bị ESP32 trong <b>${mins} phút</b>.\nKhuyến nghị: Kiểm tra nguồn điện và kết nối mạng của thiết bị.\nThời điểm: ${vnNow()}`);
     addEvent("Cảnh báo", `Mất kết nối ESP32 (${mins} phút)`, { kind: "offline", mins });
   }
 }
@@ -355,22 +355,22 @@ function tgValveOff(by) { valveState = "OFF"; valveSince = null; manualMode = nu
 function vnNow() { return new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }); }
 function tgStatusText() {
   const T = latest.temp, M = latest.moisture;
-  const tEval = T == null ? "" : T > config.tempMax ? " — <b>Cao</b> 🔴" : T < config.tempMin ? " — <b>Thấp</b> 🔵" : " — <b>Trong vùng</b> ✅";
-  const mEval = M == null ? "" : M < config.moistureOn ? " — <b>Khô, cần tưới</b> 🟠" : M > config.moistureOff ? " — <b>Ẩm cao</b> 🔵" : " — <b>Tốt</b> ✅";
-  const v = valveState === "ON" ? "🟢 <b>ĐANG TƯỚI</b>" : "⚪️ Đóng";
+  const tEval = T == null ? "" : T > config.tempMax ? " (Cao hơn ngưỡng)" : T < config.tempMin ? " (Thấp hơn ngưỡng)" : " (Trong vùng tối ưu)";
+  const mEval = M == null ? "" : M < config.moistureOn ? " (Khô, cần tưới)" : M > config.moistureOff ? " (Ẩm cao)" : " (Tốt)";
+  const v = valveState === "ON" ? "Đang tưới" : "Đóng";
   const age = latest.time ? Math.round((Date.now() - new Date(latest.time).getTime()) / 60000) : null;
-  const sensor = age == null ? "chưa có dữ liệu" : age < 2 ? "🟢 hoạt động (vừa cập nhật)" : age < 15 ? `🟢 hoạt động (${age} phút trước)` : `🔴 mất kết nối (${age} phút trước)`;
+  const sensor = age == null ? "Chưa có dữ liệu" : age < 2 ? "Hoạt động (vừa cập nhật)" : age < 15 ? `Hoạt động (cập nhật ${age} phút trước)` : `Mất kết nối (${age} phút trước)`;
   const today = new Date().toDateString();
   const wc = events.filter(e => e.type === "Tưới" && new Date(e.time).toDateString() === today).length;
-  const rain = rainProbNow != null ? `${Math.round(rainProbNow)}%` : "—";
-  return `🌱 <b>SPORO — Tình trạng vườn</b>\n🕐 ${vnNow()}\n` +
-    `\n🌡 <b>Nhiệt độ vườn:</b> ${T != null ? T + "°C" : "—"}${tEval}\n   Vùng tối ưu: ${config.tempMin}–${config.tempMax}°C` +
-    `\n💧 <b>Độ ẩm đất:</b> ${M != null ? M + "%" : "—"}${mEval}\n   Ngưỡng: tưới &lt;${config.moistureOn}% · tắt ≥${config.moistureOff}%` +
-    `\n🚿 <b>Van tưới:</b> ${v}\n   Đã tưới hôm nay: ${wc} lần · mỗi lần ${config.waterDuration}s` +
-    `\n🌧 <b>Khả năng mưa:</b> ${rain}\n📡 <b>Cảm biến:</b> ${sensor}` +
-    `\n\n▫️ /water bật tưới · /stop dừng tưới`;
+  const rain = rainProbNow != null ? `${Math.round(rainProbNow)}%` : "Chưa có";
+  return `<b>SPORO — TÌNH TRẠNG VƯỜN</b>\nCập nhật lúc: ${vnNow()}\n` +
+    `\n<b>Nhiệt độ vườn:</b> ${T != null ? T + "°C" : "—"}${tEval}\n   Vùng tối ưu: ${config.tempMin}–${config.tempMax}°C` +
+    `\n<b>Độ ẩm đất:</b> ${M != null ? M + "%" : "—"}${mEval}\n   Ngưỡng: tưới dưới ${config.moistureOn}% · tắt từ ${config.moistureOff}%` +
+    `\n<b>Van tưới:</b> ${v}\n   Đã tưới hôm nay: ${wc} lần · mỗi lần ${config.waterDuration} giây` +
+    `\n<b>Khả năng mưa:</b> ${rain}\n<b>Cảm biến:</b> ${sensor}` +
+    `\n\nLệnh điều khiển: /water bật tưới · /stop dừng tưới`;
 }
-const TG_HELP = `🌱 <b>SPORO AgriVision</b>\nTrợ lý giám sát & điều khiển vườn thông minh.\n\n<b>Các lệnh:</b>\n• /status — Xem tình trạng vườn hiện tại\n• /water — Bật tưới ngay\n• /stop — Dừng tưới\n• /help — Danh sách lệnh\n\nHệ thống tự động gửi <b>cảnh báo</b> khi vượt ngưỡng và <b>báo cáo tổng hợp mỗi ngày</b>.`;
+const TG_HELP = `<b>SPORO AGRIVISION</b>\nTrợ lý giám sát và điều khiển vườn thông minh.\n\n<b>DANH SÁCH LỆNH</b>\n/status — Xem tình trạng vườn hiện tại\n/water — Bật tưới ngay\n/stop — Dừng tưới\n/help — Xem danh sách lệnh\n\nHệ thống tự động gửi cảnh báo khi các chỉ số vượt ngưỡng an toàn và gửi báo cáo tổng hợp vào mỗi buổi sáng.`;
 let tgOffset = 0, tgBusy = false, lastTgChat = null, lastTgName = null;
 async function tgPoll() {
   const token = tgToken(); if (!token || !config.tgOn || tgBusy) return;
@@ -385,12 +385,12 @@ async function tgPoll() {
       lastTgChat = chatId; lastTgName = msg.chat.first_name || msg.chat.title || msg.chat.username || "";  // nhớ để nút Kết nối dò được
       const cmd = msg.text.trim().toLowerCase().split(/\s+/)[0].replace(/@[\w_]+$/, "");
       const allowed = !config.tgChat || chatId === String(config.tgChat);
-      const noPerm = "⛔️ <b>Chưa được cấp quyền</b>\nChat này không có quyền điều khiển tưới. Vui lòng dùng tài khoản đã kết nối trong ứng dụng.";
+      const noPerm = "<b>KHÔNG CÓ QUYỀN ĐIỀU KHIỂN</b>\nTài khoản Telegram này chưa được cấp quyền điều khiển tưới. Vui lòng sử dụng tài khoản đã kết nối trong ứng dụng.";
       if (cmd === "/start" || cmd === "/help") tgSendRaw(token, chatId, TG_HELP).catch(() => {});
       else if (cmd === "/status") tgSendRaw(token, chatId, tgStatusText()).catch(() => {});
-      else if (cmd === "/water" || cmd === "/tuoi") { if (allowed) { tgValveOn("Telegram"); tgSendRaw(token, chatId, `🚿 <b>ĐÃ BẬT TƯỚI</b>\nVan tưới đang mở, mỗi lần ${config.waterDuration}s.\nHiện tại: 🌡 ${latest.temp != null ? latest.temp + "°C" : "—"} · 💧 ${latest.moisture != null ? latest.moisture + "%" : "—"}\n\nGõ /stop để dừng bất kỳ lúc nào.`).catch(() => {}); } else tgSendRaw(token, chatId, noPerm).catch(() => {}); }
-      else if (cmd === "/stop" || cmd === "/dung") { if (allowed) { tgValveOff("Telegram"); tgSendRaw(token, chatId, "⏹ <b>ĐÃ DỪNG TƯỚI</b>\nVan đã đóng. Hệ thống trở lại chế độ tự động theo độ ẩm đất.").catch(() => {}); } else tgSendRaw(token, chatId, noPerm).catch(() => {}); }
-      else tgSendRaw(token, chatId, "❓ Lệnh không hợp lệ.\nGõ /help để xem danh sách lệnh khả dụng.").catch(() => {});
+      else if (cmd === "/water" || cmd === "/tuoi") { if (allowed) { tgValveOn("Telegram"); tgSendRaw(token, chatId, `<b>ĐÃ BẬT TƯỚI</b>\nVan tưới đang mở. Thời lượng mỗi lần: ${config.waterDuration} giây.\nNhiệt độ: ${latest.temp != null ? latest.temp + "°C" : "—"} · Độ ẩm đất: ${latest.moisture != null ? latest.moisture + "%" : "—"}\n\nGõ /stop để dừng bất kỳ lúc nào.`).catch(() => {}); } else tgSendRaw(token, chatId, noPerm).catch(() => {}); }
+      else if (cmd === "/stop" || cmd === "/dung") { if (allowed) { tgValveOff("Telegram"); tgSendRaw(token, chatId, "<b>ĐÃ DỪNG TƯỚI</b>\nVan tưới đã đóng. Hệ thống trở lại chế độ tự động theo độ ẩm đất.").catch(() => {}); } else tgSendRaw(token, chatId, noPerm).catch(() => {}); }
+      else tgSendRaw(token, chatId, "<b>LỆNH KHÔNG HỢP LỆ</b>\nGõ /help để xem danh sách lệnh khả dụng.").catch(() => {});
     }
   } catch (e) {}
   tgBusy = false;
@@ -401,14 +401,14 @@ function tgDailyText() {
   const dayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" });
   const today = new Date().toDateString();
   const th = history.filter(h => new Date(h.time).toDateString() === today);
-  let stats = "Chưa có dữ liệu cảm biến hôm nay.";
+  let stats = "Chưa ghi nhận dữ liệu cảm biến trong ngày.";
   if (th.length) { const T = th.map(x => x.temp), M = th.map(x => x.moisture);
     const tAvg = (T.reduce((a, b) => a + b, 0) / T.length).toFixed(1), mAvg = Math.round(M.reduce((a, b) => a + b, 0) / M.length);
-    stats = `🌡 <b>Nhiệt độ:</b> ${Math.min(...T).toFixed(0)}–${Math.max(...T).toFixed(0)}°C (TB ${tAvg}°C)\n💧 <b>Độ ẩm đất:</b> ${Math.min(...M).toFixed(0)}–${Math.max(...M).toFixed(0)}% (TB ${mAvg}%)\n📈 <b>Số mẫu ghi:</b> ${th.length}`; }
+    stats = `Nhiệt độ: ${Math.min(...T).toFixed(0)}–${Math.max(...T).toFixed(0)}°C (trung bình ${tAvg}°C)\nĐộ ẩm đất: ${Math.min(...M).toFixed(0)}–${Math.max(...M).toFixed(0)}% (trung bình ${mAvg}%)\nSố mẫu ghi nhận: ${th.length}`; }
   const wc = events.filter(e => e.type === "Tưới" && new Date(e.time).toDateString() === today).length;
   const al = events.filter(e => e.type === "Cảnh báo" && new Date(e.time).toDateString() === today).length;
   const dayVN = new Date().toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
-  return `☀️ <b>SPORO — Báo cáo hằng ngày</b>\n📅 ${dayVN}\n\n<b>📊 Tổng hợp trong ngày</b>\n${stats}\n🚿 <b>Số lần tưới:</b> ${wc} lần\n⚠️ <b>Cảnh báo:</b> ${al}\n\n<b>⏱ Hiện tại</b>\n🌡 ${latest.temp != null ? latest.temp + "°C" : "—"} · 💧 ${latest.moisture != null ? latest.moisture + "%" : "—"} · 🚿 ${valveState === "ON" ? "Đang tưới" : "Đóng"}\n\nGõ /status để xem chi tiết theo thời gian thực.`;
+  return `<b>SPORO — BÁO CÁO HẰNG NGÀY</b>\n${dayVN}\n\n<b>TỔNG HỢP TRONG NGÀY</b>\n${stats}\nSố lần tưới: ${wc} lần\nSố cảnh báo: ${al}\n\n<b>HIỆN TẠI</b>\nNhiệt độ: ${latest.temp != null ? latest.temp + "°C" : "—"} · Độ ẩm đất: ${latest.moisture != null ? latest.moisture + "%" : "—"} · Van tưới: ${valveState === "ON" ? "Đang tưới" : "Đóng"}\n\nGõ /status để xem chi tiết theo thời gian thực.`;
 }
 let tgDailySent = "";
 function tgDailyReport() {
@@ -603,7 +603,7 @@ app.post("/api/telegram/test", requireAuth, async (req, res) => {
   const chat = ((req.body && req.body.chat) || tgChat() || "").trim();
   if (!token || !chat) return res.json({ ok: false, error: "Thiếu token hoặc Chat ID" });
   try {
-    const j = await tgSendRaw(token, chat, "SPORO ✅ Kết nối Telegram thành công!\nBạn sẽ nhận cảnh báo nhiệt độ, độ ẩm, mất kết nối tại đây.");
+    const j = await tgSendRaw(token, chat, "<b>SPORO — KẾT NỐI THÀNH CÔNG</b>\nTài khoản Telegram của bạn đã được liên kết với hệ thống.\nBạn sẽ nhận tại đây: cảnh báo nhiệt độ, độ ẩm đất, mất kết nối cảm biến và báo cáo tổng hợp hằng ngày.\n\nGõ /help để xem danh sách lệnh điều khiển.");
     if (j.ok) res.json({ ok: true });
     else res.json({ ok: false, error: j.description || "Gửi thất bại" });
   } catch (e) { res.json({ ok: false, error: "Không gọi được Telegram" }); }
